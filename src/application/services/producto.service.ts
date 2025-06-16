@@ -7,4 +7,20 @@ export default class ProductoService {
   getAll(): Promise<Producto[]> {
     return this.productoRepositoy.getAll();
   }
+
+  getById(id: number): Promise<Producto | null> {
+    return this.productoRepositoy.getById(id);
+  }
+
+  create(producto: Producto): Promise<Producto> {
+    return this.productoRepositoy.create(producto);
+  }
+
+  update(producto: Producto, id: number): Promise<Producto> {
+    return this.productoRepositoy.update(producto, id);
+  }
+
+  delete(id: number): Promise<Producto> {
+    return this.productoRepositoy.delete(id);
+  }
 }
