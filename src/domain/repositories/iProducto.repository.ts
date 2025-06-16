@@ -5,5 +5,5 @@ export interface IProductoRepository {
   getById(id: number): Promise<Producto | null>;
   create(producto: Producto): Promise<Producto>;
   update(producto: Producto, id: number): Promise<Producto>;
-  delete(id: number): Promise<boolean>;
+  delete(id: number): Promise<Producto>;
 }
