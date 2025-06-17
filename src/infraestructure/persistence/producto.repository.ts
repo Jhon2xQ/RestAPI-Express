@@ -2,7 +2,7 @@ import {
   CreateProductoDTO,
   UpdateProductoDTO,
 } from "../../application/dtos/producto.dto";
-import { prisma } from "../../config/prisma";
+import { prisma } from "../../core/configs/prisma";
 import { Producto } from "../../domain/entities/producto.entity";
 import { IProductoRepository } from "../../domain/repositories/iProducto.repository";
 
