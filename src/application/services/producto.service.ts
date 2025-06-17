@@ -1,5 +1,6 @@
 import { Producto } from "../../domain/entities/producto.entity";
 import { ProductoRepository } from "../../infraestructure/persistence/producto.repository";
+import { CreateProductoDTO, UpdateProductoDTO } from "../dtos/producto.dto";
 
 export default class ProductoService {
   constructor(private productoRepositoy: ProductoRepository) {}
@@ -12,11 +13,11 @@ export default class ProductoService {
     return this.productoRepositoy.getById(id);
   }
 
-  create(producto: Producto): Promise<Producto> {
+  create(producto: CreateProductoDTO): Promise<Producto> {
     return this.productoRepositoy.create(producto);
   }
 
-  update(producto: Producto, id: number): Promise<Producto> {
+  update(producto: UpdateProductoDTO, id: number): Promise<Producto> {
     return this.productoRepositoy.update(producto, id);
   }
 

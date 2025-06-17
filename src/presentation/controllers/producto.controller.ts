@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import ProductoService from "../../application/services/producto.service";
 import { error } from "console";
+import {
+  productoCreateSchema,
+  productoUpdateSchema,
+} from "../middleware/schemas/producto.schema";
 
 //falta el return y promise para devolver con middleware
 export default class ProductoController {
@@ -36,13 +40,21 @@ export default class ProductoController {
   };
 
   create = async (req: Request, res: Response): Promise<Response<unknown>> => {
-    const producto = await this.productoService.create(req.body);
+    const { error, value } = productoCreateSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.message });
+    }
+    const producto = await this.productoService.create(value);
     return res.status(201).json({ producto });
   };
 
   update = async (req: Request, res: Response): Promise<Response<unknown>> => {
+    const { error, value } = productoUpdateSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.message });
+    }
     const producto = await this.productoService.update(
-      req.body,
+      value,
       Number(req.params.id)
     );
     if (producto) {
