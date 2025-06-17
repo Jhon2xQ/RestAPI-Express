@@ -6,12 +6,8 @@ export default class ProductoController {
   constructor(private productoService: ProductoService) {}
 
   getAll = async (_: Request, res: Response): Promise<Response<unknown>> => {
-    try {
-      const productos = await this.productoService.getAll();
-      return res.status(200).json({ productos });
-    } catch (error) {
-      throw new CustomError("Internal server error", 500);
-    }
+    const productos = await this.productoService.getAll();
+    return res.status(200).json({ productos });
   };
 
   getById = async (req: Request, res: Response): Promise<Response<unknown>> => {
@@ -54,9 +50,9 @@ export default class ProductoController {
 //podriamos user los middleware de mejor forma [middleware en routes tal vez] -ok
 //añadir validacion con jwt y dar una capa de seguridad a los endpoints.
 // - averiguar sobre el created_at y updated_at
-// - averiguar sobre env para mas cosas
+// - averiguar sobre env para mas cosas     -ok?
 
 //relaciones entre tablas.
-//manejar de mejor forma las excepciones.  -ok : a medias, seria mejor que regrese un json.
+//manejar de mejor forma las excepciones.  -ok
 //convertir de routes a container
 // - todo por ahora :)  -> despliegue.
