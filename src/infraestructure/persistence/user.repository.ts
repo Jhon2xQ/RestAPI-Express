@@ -10,9 +10,15 @@ export class UserRepository implements IUserRepository {
     });
   }
 
+  async getUserByEmail(email: string): Promise<User | null> {
+    return await prisma.user.findUnique({
+      where: { email },
+    });
+  }
+
   async create(user: CreateUserDTO): Promise<User> {
     return await prisma.user.create({
-      data: user,
+      data: { ...user },
     });
   }
 }

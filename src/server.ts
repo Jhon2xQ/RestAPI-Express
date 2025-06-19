@@ -2,15 +2,15 @@ import express from "express";
 
 import productoRouter from "./routes/producto.route";
 import errorHandler from "./core/middlewares/error.handler.middleware";
-import userRouter from "./routes/user.route";
+import authRouter from "./routes/auth.route";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 
+app.use("/", authRouter);
 app.use("/productos", productoRouter);
-app.use("/users", userRouter);
 
 app.post("/login", (req, res) => {
   res.json({ message: "usuario logueado" });
