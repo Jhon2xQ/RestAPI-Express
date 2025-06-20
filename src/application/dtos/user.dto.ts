@@ -21,6 +21,11 @@ export class CreateUserDTO {
   }
 }
 
+export interface LoginUserDto {
+  email: string;
+  password: string;
+}
+
 export interface PublicUserDTO {
   id: number;
   lastName: string;

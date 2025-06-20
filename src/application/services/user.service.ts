@@ -14,19 +14,7 @@ export default class UserService {
     return await this.userRepo.getUserByEmail(email);
   }
 
-  async AuthenticatedUser(email: string, pass: string): Promise<User | null> {
-    const foundUser = await this.getUserByEmail(email);
-    if (!foundUser) {
-      return null;
-    }
-    const isMatchedPassword = await bcrypt.compare(pass, foundUser.password);
-    if (!isMatchedPassword) {
-      return null;
-    }
-    return foundUser;
-  }
-
-  async create(user: CreateUserDTO): Promise<User> {
+  async createUser(user: CreateUserDTO): Promise<User> {
     const encryptPassword = await bcrypt.hash(user.password, 10);
     user.setPassword(encryptPassword);
     return await this.userRepo.create(user);

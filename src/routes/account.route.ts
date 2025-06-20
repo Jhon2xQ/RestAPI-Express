@@ -8,25 +8,25 @@ import {
   userloginSchema,
   userRegisterSchema,
 } from "../presentation/schemas/auth.schema";
+import AccountService from "../application/services/account.service";
 
-const authRouter = Router();
+const accountRouter = Router();
 
 const userRepo = new UserRepository();
 const userService = new UserService(userRepo);
-const userControll = new AccountController(userService);
+const accountService = new AccountService(userService);
+const accountController = new AccountController(accountService);
 
-authRouter.get("/users/:id", asyncHandler(userControll.getById));
-
-authRouter.post(
+accountRouter.post(
   "/login",
   validate(userloginSchema),
-  asyncHandler(userControll.login)
+  asyncHandler(accountController.login)
 );
 
-authRouter.post(
+accountRouter.post(
   "/register",
   validate(userRegisterSchema),
-  asyncHandler(userControll.register)
+  asyncHandler(accountController.register)
 );
 
-export default authRouter;
+export default accountRouter;
