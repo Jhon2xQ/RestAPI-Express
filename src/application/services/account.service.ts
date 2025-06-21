@@ -2,7 +2,7 @@ import { User } from "../../domain/entities/user.entity";
 import { CreateUserDTO, LoginUserDto } from "../dtos/user.dto";
 import UserService from "./user.service";
 import bcrypt from "bcrypt";
-import { JsonWebTokenError, NotBeforeError, sign, TokenExpiredError, verify } from "jsonwebtoken";
+import { sign } from "jsonwebtoken";
 
 export default class AccountService {
   constructor(private userService: UserService) {}
@@ -22,6 +22,10 @@ export default class AccountService {
     const isMatchedPassword = await bcrypt.compare(user.password, foundUser.password);
     if (!isMatchedPassword) return null;
     return this.generateToken(foundUser);
+  }
+
+  async getCurrentUser(email: string): Promise<User | null> {
+    return await this.userService.getUserByEmail(email);
   }
 
   generateToken(user: User): string {

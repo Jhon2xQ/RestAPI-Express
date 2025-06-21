@@ -4,11 +4,9 @@ import UserService from "../application/services/user.service";
 import { AccountController } from "../presentation/controllers/account.controller";
 import asyncHandler from "../core/middlewares/async.handler.middleware";
 import { validate } from "../core/middlewares/validation.middleware";
-import {
-  userloginSchema,
-  userRegisterSchema,
-} from "../presentation/schemas/auth.schema";
+import { userloginSchema, userRegisterSchema } from "../presentation/schemas/account.schema";
 import AccountService from "../application/services/account.service";
+import { verifyToken } from "../core/middlewares/account.middleware";
 
 const accountRouter = Router();
 
@@ -17,11 +15,10 @@ const userService = new UserService(userRepo);
 const accountService = new AccountService(userService);
 const accountController = new AccountController(accountService);
 
-accountRouter.post(
-  "/login",
-  validate(userloginSchema),
-  asyncHandler(accountController.login)
-);
+accountRouter.get("/profile", verifyToken, asyncHandler(accountController.profile));
+accountRouter.post("/login", validate(userloginSchema), asyncHandler(accountController.login));
+
+accountRouter.get("/logout", verifyToken, accountController.logout);
 
 accountRouter.post(
   "/register",

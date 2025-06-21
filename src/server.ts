@@ -3,11 +3,13 @@ import express from "express";
 import productoRouter from "./routes/producto.route";
 import errorHandler from "./core/middlewares/error.handler.middleware";
 import accountRouter from "./routes/account.route";
+import cookieParser from "cookie-parser";
 
-const app = express();
 const PORT = process.env.PORT || 3001;
 
+const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
 app.use("/", accountRouter);
 app.use("/productos", productoRouter);
