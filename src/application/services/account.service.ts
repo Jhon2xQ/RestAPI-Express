@@ -1,11 +1,14 @@
+import { injectable, inject } from "inversify";
 import { User } from "../../domain/entities/user.entity";
-import { CreateUserDTO, LoginUserDto } from "../dtos/user.dto";
+import { CreateUserDTO } from "../dtos/user.dto";
 import UserService from "./user.service";
 import bcrypt from "bcrypt";
 import { sign } from "jsonwebtoken";
+import { TYPES } from "../../core/IoC/ioc.types";
 
+@injectable()
 export default class AccountService {
-  constructor(private userService: UserService) {}
+  constructor(@inject(TYPES.UserService) private userService: UserService) {}
 
   async userRegister(user: CreateUserDTO): Promise<string | null> {
     const foundUser = this.userService.getUserByEmail(user.email);

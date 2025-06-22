@@ -1,9 +1,12 @@
+import { inject, injectable } from "inversify";
 import { Producto } from "../../domain/entities/producto.entity";
 import { ProductoRepository } from "../../infraestructure/persistence/producto.repository";
 import { CreateProductoDTO, UpdateProductoDTO } from "../dtos/producto.dto";
+import { TYPES } from "../../core/IoC/ioc.types";
 
+@injectable()
 export default class ProductoService {
-  constructor(private productoRepositoy: ProductoRepository) {}
+  constructor(@inject(TYPES.ProductoRepository) private productoRepositoy: ProductoRepository) {}
 
   getAll(): Promise<Producto[]> {
     return this.productoRepositoy.getAll();

@@ -1,11 +1,10 @@
-import {
-  CreateProductoDTO,
-  UpdateProductoDTO,
-} from "../../application/dtos/producto.dto";
+import { injectable } from "inversify";
+import { CreateProductoDTO, UpdateProductoDTO } from "../../application/dtos/producto.dto";
 import { prisma } from "../../core/configs/prisma";
 import { Producto } from "../../domain/entities/producto.entity";
 import { IProductoRepository } from "../../domain/repositories/iProducto.repository";
 
+@injectable()
 export class ProductoRepository implements IProductoRepository {
   async getAll(): Promise<Producto[]> {
     return await prisma.producto.findMany();

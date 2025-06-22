@@ -2,10 +2,12 @@ import { Request, Response } from "express";
 import CustomError from "../../core/exceptions/custom.error";
 import { CreateUserDTO } from "../../application/dtos/user.dto";
 import AccountService from "../../application/services/account.service";
-import { User } from "../../../generated/prisma";
+import { injectable, inject } from "inversify";
+import { TYPES } from "../../core/IoC/ioc.types";
 
+@injectable()
 export class AccountController {
-  constructor(private accountService: AccountService) {}
+  constructor(@inject(TYPES.AccountService) private accountService: AccountService) {}
 
   register = async (req: Request, res: Response): Promise<Response<string>> => {
     const user = new CreateUserDTO(req.body);
@@ -28,7 +30,7 @@ export class AccountController {
 
   logout = (req: Request, res: Response) => {
     res.clearCookie("token");
-    //aqui se deberia implementar para poner el token en la lista negra
+    //aqui se deberia implementar para poner el token en la lista negra //// gaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     res.json({ message: "Sesión cerrada" });
   };
 
@@ -38,3 +40,10 @@ export class AccountController {
     return res.status(200).json({ foundUser });
   };
 }
+
+//ver la posibilidad de usar el user agent para mejorar la seguridad de los jwt robados
+// no te olvides de lo de arriba!!!
+//falta la parte de refresh token y mejora las cookies y los tiempos de vida tanto del token como de la cookie
+//tambien puede que se haga algo con los dtos
+//aah: tal vez un createCookie : gaaa!!
+//relaciones entre tablas y createdAt | updatedAt

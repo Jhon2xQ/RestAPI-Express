@@ -1,29 +1,19 @@
 import { Router } from "express";
-import { UserRepository } from "../infraestructure/persistence/user.repository";
-import UserService from "../application/services/user.service";
 import { AccountController } from "../presentation/controllers/account.controller";
 import asyncHandler from "../core/middlewares/async.handler.middleware";
 import { validate } from "../core/middlewares/validation.middleware";
-import { userloginSchema, userRegisterSchema } from "../presentation/schemas/account.schema";
-import AccountService from "../application/services/account.service";
+import { userLoginSchema, userRegisterSchema } from "../presentation/schemas/account.schema";
 import { verifyToken } from "../core/middlewares/account.middleware";
+import container from "../core/IoC/ioc.config";
+import { TYPES } from "../core/IoC/ioc.types";
 
 const accountRouter = Router();
 
-const userRepo = new UserRepository();
-const userService = new UserService(userRepo);
-const accountService = new AccountService(userService);
-const accountController = new AccountController(accountService);
+const accountController = container.get<AccountController>(TYPES.AccountController);
 
 accountRouter.get("/profile", verifyToken, asyncHandler(accountController.profile));
-accountRouter.post("/login", validate(userloginSchema), asyncHandler(accountController.login));
-
-accountRouter.get("/logout", verifyToken, accountController.logout);
-
-accountRouter.post(
-  "/register",
-  validate(userRegisterSchema),
-  asyncHandler(accountController.register)
-);
+accountRouter.post("/login", validate(userLoginSchema), asyncHandler(accountController.login));
+accountRouter.post("/register", validate(userRegisterSchema), asyncHandler(accountController.register));
+accountRouter.post("/logout", verifyToken, accountController.logout);
 
 export default accountRouter;
