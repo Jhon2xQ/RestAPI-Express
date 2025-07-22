@@ -1,6 +1,6 @@
 import { injectable, inject } from "inversify";
 import { User } from "../../domain/entities/user.entity";
-import { CreateUserDTO } from "../dtos/user.dto";
+import { CreateUserDTO, LoginUserDto, PublicUserDTO } from "../dtos/user.dto";
 import UserService from "./user.service";
 import bcrypt from "bcrypt";
 import { sign } from "jsonwebtoken";
@@ -11,28 +11,29 @@ import { USER_TOKEN_TTL, JWT_SECRET_KEY } from "../../core/configs/config";
 export default class AccountService {
   constructor(@inject(TYPES.UserService) private userService: UserService) {}
 
-  async userRegister(user: CreateUserDTO): Promise<string | null> {
-    const foundUser = await this.userService.getUserByEmail(user.email);
+  async userRegister(user: CreateUserDTO): Promise<boolean> {
+    const foundUser = await this.userService.getPublicUserByEmail(user.email);
     if (!foundUser) {
       await this.userService.createUser(user);
-      return "usuario creado con exito";
+      return true;
     }
-    return null;
+    return false;
   }
 
-  async userLogin(user: User): Promise<string | null> {
+  async userLogin(user: LoginUserDto): Promise<string | null> {
     const foundUser = await this.userService.getUserByEmail(user.email);
     if (!foundUser) return null;
-    const isMatchedPassword = await bcrypt.compare(user.password, foundUser.password);
+    const { lastName, firstName, email, password } = foundUser;
+    const isMatchedPassword = await bcrypt.compare(user.password, password);
     if (!isMatchedPassword) return null;
-    return this.generateToken(foundUser);
+    return this.generateToken({ lastName, firstName, email });
   }
 
-  async getCurrentUser(email: string): Promise<User | null> {
-    return await this.userService.getUserByEmail(email);
+  async getProfileByEmail(email: string): Promise<PublicUserDTO | null> {
+    return await this.userService.getPublicUserByEmail(email);
   }
 
-  generateToken(user: User): string {
+  generateToken(user: PublicUserDTO): string {
     return sign(user, JWT_SECRET_KEY, { expiresIn: USER_TOKEN_TTL });
   }
 }

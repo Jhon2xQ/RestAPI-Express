@@ -1,49 +1,43 @@
 import { Request, Response } from "express";
 import CustomError from "../../core/exceptions/custom.error";
-import { CreateUserDTO } from "../../application/dtos/user.dto";
 import AccountService from "../../application/services/account.service";
 import { injectable, inject } from "inversify";
 import { TYPES } from "../../core/IoC/ioc.types";
+import CustomResponse from "../../core/exceptions/custom.response";
 
 @injectable()
 export class AccountController {
   constructor(@inject(TYPES.AccountService) private accountService: AccountService) {}
 
-  register = async (req: Request, res: Response): Promise<Response<string>> => {
-    const user = new CreateUserDTO(req.body);
-    const message = await this.accountService.userRegister(user);
-    if (!message) throw new CustomError("Email ya se encuentra registrado", 401);
-    return res.status(201).json({ message });
+  register = async (req: Request, res: Response): Promise<Response<any>> => {
+    const success = await this.accountService.userRegister(req.body);
+    if (!success) throw new CustomError("Email ya se encuentra registrado", 404);
+    return res.status(201).json({ success, message: "Usuario registrado con exito" });
   };
 
   login = async (req: Request, res: Response): Promise<Response<string>> => {
     const jwtToken = await this.accountService.userLogin(req.body);
-    if (!jwtToken) throw new CustomError("Usuario o contrasenia invalido", 401);
+    if (!jwtToken) throw new CustomError("Usuario o contrasenia invalido", 404);
     res.cookie("token", jwtToken, {
       httpOnly: true,
       secure: false, // true in production
       sameSite: "strict",
       maxAge: 60 * 60 * 24,
     });
-    return res.status(200).json({ message: "usuario logueado con exito" });
+    return res.status(200).json({ success: true, message: "Usuario logueado con exito" });
   };
 
   logout = (req: Request, res: Response) => {
     res.clearCookie("token");
-    //aqui se deberia implementar para poner el token en la lista negra //// gaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    //aqui se deberia implementar para poner el token en la lista negra ////
     res.json({ message: "Sesión cerrada" });
   };
 
   profile = async (req: Request, res: Response): Promise<Response<unknown>> => {
-    const foundUser = await this.accountService.getCurrentUser(req.user.email);
+    const foundUser = await this.accountService.getProfileByEmail(req.user.email);
     if (!foundUser) throw new CustomError("Error al acceder a la cuenta", 401);
-    return res.status(200).json({ foundUser });
+    return res.status(200).json({ success: true, data: foundUser });
   };
 }
-
-//ver la posibilidad de usar el user agent para mejorar la seguridad de los jwt robados
-// no te olvides de lo de arriba!!!
 //falta la parte de refresh token y mejora las cookies y los tiempos de vida tanto del token como de la cookie
-//tambien puede que se haga algo con los dtos
-//aah: tal vez un createCookie : gaaa!!
 //relaciones entre tablas y createdAt | updatedAt

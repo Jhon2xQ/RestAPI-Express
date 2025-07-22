@@ -1,22 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import CustomError from "../exceptions/custom.error";
-import CustomResponse from "../../application/dtos/custom.response";
-import PlainDto from "../../application/dtos/plain.dto";
-import ResponseErrorDto from "../../application/dtos/response.error.dto";
+import CustomResponse from "../exceptions/custom.response";
+import PlainDto from "../exceptions/plain.dto";
+import ResponseErrorDto from "../exceptions/response.error.dto";
 
-export default function errorHandler(
-  err: any,
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+export default function errorHandler(err: any, req: Request, res: Response, next: NextFunction) {
   if (!(err instanceof CustomError)) {
     const response: CustomResponse<PlainDto> = {
       success: false,
-      message:
-        process.env.NODE_ENV === "development"
-          ? err.message
-          : "Server error, please try again later",
+      message: process.env.NODE_ENV === "development" ? err.message : "Server error, please try again later",
     };
 
     res.status(500).json(response);

@@ -1,25 +1,29 @@
 import { injectable, inject } from "inversify";
-import { User } from "../../domain/entities/user.entity";
 import { UserRepository } from "../../infraestructure/persistence/user.repository";
-import { CreateUserDTO } from "../dtos/user.dto";
-import bcrypt from "bcrypt";
+import { CreateUserDTO, PublicUserDTO } from "../dtos/user.dto";
 import { TYPES } from "../../core/IoC/ioc.types";
+import { User } from "../../domain/entities/user.entity";
 
 @injectable()
 export default class UserService {
   constructor(@inject(TYPES.UserRepository) private userRepository: UserRepository) {}
 
-  async getById(id: number): Promise<User | null> {
-    return await this.userRepository.getById(id);
+  async getPublicUserByEmail(iemail: string): Promise<PublicUserDTO | null> {
+    const foundUser = await this.userRepository.getUserByEmail(iemail);
+    if (!foundUser) return null;
+    const { lastName, firstName, email } = foundUser;
+    return { lastName, firstName, email };
   }
 
-  async getUserByEmail(email: string): Promise<User | null> {
-    return await this.userRepository.getUserByEmail(email);
+  async getUserByEmail(iemail: string): Promise<User | null> {
+    const foundUser = await this.userRepository.getUserByEmail(iemail);
+    if (!foundUser) return null;
+    return foundUser;
   }
 
-  async createUser(user: CreateUserDTO): Promise<User> {
-    const encryptPassword = await bcrypt.hash(user.password, 10);
-    user.setPassword(encryptPassword);
-    return await this.userRepository.create(user);
+  async createUser(iuser: CreateUserDTO): Promise<PublicUserDTO> {
+    const createdUser = await this.userRepository.create(iuser);
+    const { lastName, firstName, email } = createdUser;
+    return { lastName, firstName, email };
   }
 }
