@@ -5,13 +5,14 @@ import UserService from "./user.service";
 import bcrypt from "bcrypt";
 import { sign } from "jsonwebtoken";
 import { TYPES } from "../../core/IoC/ioc.types";
+import { USER_TOKEN_TTL, JWT_SECRET_KEY } from "../../core/configs/config";
 
 @injectable()
 export default class AccountService {
   constructor(@inject(TYPES.UserService) private userService: UserService) {}
 
   async userRegister(user: CreateUserDTO): Promise<string | null> {
-    const foundUser = this.userService.getUserByEmail(user.email);
+    const foundUser = await this.userService.getUserByEmail(user.email);
     if (!foundUser) {
       await this.userService.createUser(user);
       return "usuario creado con exito";
@@ -32,6 +33,6 @@ export default class AccountService {
   }
 
   generateToken(user: User): string {
-    return sign(user, process.env.JWT_SECRET_KEY || "a", { expiresIn: 3600 });
+    return sign(user, JWT_SECRET_KEY, { expiresIn: USER_TOKEN_TTL });
   }
 }

@@ -4,8 +4,7 @@ import productoRouter from "./routes/producto.route";
 import errorHandler from "./core/middlewares/error.handler.middleware";
 import accountRouter from "./routes/account.route";
 import cookieParser from "cookie-parser";
-
-const PORT = process.env.PORT || 3001;
+import { PORT } from "./core/configs/config";
 
 const app = express();
 app.use(express.json());
