@@ -1,5 +1,4 @@
 import express from "express";
-
 import productoRouter from "./routes/producto.route";
 import errorHandler from "./core/middlewares/error.handler.middleware";
 import accountRouter from "./routes/account.route";
