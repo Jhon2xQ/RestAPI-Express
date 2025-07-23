@@ -15,12 +15,6 @@ export default class UserService {
     return { lastName, firstName, email };
   }
 
-  async getUserByEmail(iemail: string): Promise<User | null> {
-    const foundUser = await this.userRepository.getUserByEmail(iemail);
-    if (!foundUser) return null;
-    return foundUser;
-  }
-
   async createUser(iuser: CreateUserDTO): Promise<PublicUserDTO> {
     const createdUser = await this.userRepository.create(iuser);
     const { lastName, firstName, email } = createdUser;
